@@ -1,0 +1,29 @@
+CPANEL DEPLOYMENT INSTRUCTIONS
+==============================
+
+1. Login to your cPanel account
+2. Open File Manager
+3. Navigate to public_html directory
+4. Upload ALL contents from this cpanel-deploy folder to public_html
+5. Make sure .htaccess file is uploaded (it may be hidden)
+6. Set proper permissions (755 for directories, 644 for files)
+
+IMPORTANT NOTES:
+- This is only the FRONTEND (static files)
+- You still need to deploy the BACKEND separately to a Node.js hosting service
+- Update your environment variables with the correct backend URL
+- Test all functionality after deployment
+
+Backend hosting options:
+- Heroku (free tier available)
+- Railway
+- Render
+- DigitalOcean App Platform
+
+For backend deployment, use the Procfile and env.production.example files.
+
+NEXT STEPS:
+1. Upload contents of cpanel-deploy/ to your cPanel public_html
+2. Deploy backend to a Node.js hosting service
+3. Update environment variables with your backend URL
+4. Test your website
