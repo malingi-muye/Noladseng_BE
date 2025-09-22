@@ -3,6 +3,7 @@ import type { ApiResponse } from '../types/api';
 import type { SupabaseApiClient } from '../types/supabase';
 import type { ContactMessage } from '@shared/api';
 import { ga4Client } from './analytics';
+import { buildApiUrl, getApiBaseUrl } from './apiBase';
 
 // Helper function to format Supabase responses as ApiResponse
 function isNetworkError(err: any): boolean {
@@ -75,8 +76,8 @@ async function adminFetch<T>(path: string, init: RequestInit): Promise<ApiRespon
     // Ensure path starts with a slash and prepend base URL if needed
     const fullPath = path.startsWith('/') ? path : `/${path}`;
     
-    // Use environment-based API URL
-    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    // Use environment-based API URL (Vercel backend)
+    const baseUrl = getApiBaseUrl();
     const url = new URL(fullPath, baseUrl).toString();
 
     // Log request details
@@ -851,11 +852,11 @@ export const api: SupabaseApiClient = {
       try {
         console.log('[contact.create] submitting:', data);
         // Use server route (service role) to avoid RLS and also send email
-        const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+        const baseUrl = getApiBaseUrl();
         const tryEndpoints = [
-          `${baseUrl}/api/contact`,
-          `${baseUrl}/api/contact/create`,
-          `${baseUrl}/api/contact/send`
+          `${baseUrl}/contact`,
+          `${baseUrl}/contact/create`,
+          `${baseUrl}/contact/send`
         ];
 
         let finalRes: Response | null = null;
@@ -913,7 +914,7 @@ export const api: SupabaseApiClient = {
         if (!finalRes.ok || !finalJson?.success) {
           // If endpoint returned an error, still attempt to call a send-only route as a best-effort
           try {
-            const sendEndpoint = `${baseUrl}/api/contact/send`;
+            const sendEndpoint = `${baseUrl}/contact/send`;
             await fetch(sendEndpoint, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },

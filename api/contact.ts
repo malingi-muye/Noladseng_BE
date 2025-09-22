@@ -1,24 +1,19 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { sendEmail, renderContactEmail } from '../server/services/email.js';
 import { supabaseAdmin } from '../server/supabaseAdmin.js';
+import { sendEmail, renderContactEmail } from '../server/services/email.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
-  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only allow POST requests
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed' 
-    });
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
   try {
@@ -27,10 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
     if (!name || !email || !message) {
       console.warn('[contact:create] validation failed');
-      return res.status(400).json({ 
-        success: false, 
-        error: 'name, email, and message are required' 
-      });
+      return res.status(400).json({ success: false, error: 'name, email, and message are required' });
     }
 
     // Insert into DB with service role to bypass RLS
@@ -42,10 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       
     if (dbError) {
       console.error('DB insert failed:', dbError);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Failed to save message' 
-      });
+      return res.status(500).json({ success: false, error: 'Failed to save message' });
     }
 
     // Send notification email (best-effort)
@@ -66,9 +55,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.json({ success: true, data: inserted });
   } catch (error: any) {
     console.error('Contact handler error:', error);
-    return res.status(500).json({ 
-      success: false, 
-      error: error?.message || 'Failed to create contact message' 
-    });
+    return res.status(500).json({ success: false, error: error?.message || 'Failed to create contact message' });
   }
 }

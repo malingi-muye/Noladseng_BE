@@ -17,9 +17,11 @@ interface SourceData {
   sessions: number[];
 }
 
+import { buildApiUrl } from './apiBase';
+
 export const analyticsApi = {
   async getMetrics(): Promise<GA4Metrics> {
-    const response = await fetch('/api/analytics/metrics');
+    const response = await fetch(buildApiUrl('/api/analytics/metrics'));
     if (!response.ok) {
       throw new Error('Failed to fetch analytics metrics');
     }
@@ -27,7 +29,7 @@ export const analyticsApi = {
   },
   
   async getTimeseries(): Promise<TimeseriesData> {
-    const response = await fetch('/api/analytics/timeseries');
+    const response = await fetch(buildApiUrl('/api/analytics/timeseries'));
     if (!response.ok) {
       throw new Error('Failed to fetch timeseries data');
     }
@@ -35,7 +37,7 @@ export const analyticsApi = {
   },
   
   async getSources(): Promise<SourceData> {
-    const response = await fetch('/api/analytics/sources');
+    const response = await fetch(buildApiUrl('/api/analytics/sources'));
     if (!response.ok) {
       throw new Error('Failed to fetch traffic sources');
     }

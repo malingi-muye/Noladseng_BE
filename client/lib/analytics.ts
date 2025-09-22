@@ -656,8 +656,12 @@ import {
   ConversionData,
 } from "@shared/analytics";
 import { ApiResponse } from "@shared/api";
+import { buildApiUrl } from "./apiBase";
 
 async function fetchJSON<T = any>(url: string): Promise<T> {
+  if (url.startsWith('/api/')) {
+    url = buildApiUrl(url);
+  }
   const sep = url.includes("?") ? "&" : "?";
   const tsUrl = `${url}${sep}ts=${Date.now()}`;
   const opts: RequestInit = {

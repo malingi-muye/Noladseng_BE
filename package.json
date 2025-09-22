@@ -16,7 +16,7 @@
     "preview": "vite preview",
     "format.fix": "prettier --write .",
     "typecheck": "tsc",
-    "deploy:vercel": "npm run build:client && vercel --prod",
+    "deploy:vercel": "vercel --prod",
     "deploy:cpanel": "npm run build:client && echo 'Upload dist/ contents to cPanel public_html'"
   },
   "dependencies": {

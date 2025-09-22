@@ -2,77 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/contact.ts",
+      "src": "api/**/*.ts",
       "use": "@vercel/node",
       "config": {
         "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/quotes.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/analytics/[...path].ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/admin/products.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/admin/services.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/admin/testimonials.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/admin/blog.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/admin/contacts.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/admin/quotes.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/health.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 10
       }
     }
   ],
   "routes": [
+    {
+      "src": "/api/health",
+      "dest": "/api/health.ts"
+    },
     {
       "src": "/api/contact",
       "dest": "/api/contact.ts"
@@ -82,36 +23,44 @@
       "dest": "/api/quotes.ts"
     },
     {
-      "src": "/api/analytics/(.*)",
-      "dest": "/api/analytics/[...path].ts"
+      "src": "/api/analytics/overview",
+      "dest": "/api/analytics/overview.ts"
     },
     {
-      "src": "/api/admin/products(.*)",
+      "src": "/api/analytics/realtime",
+      "dest": "/api/analytics/realtime.ts"
+    },
+    {
+      "src": "/api/analytics/conversions",
+      "dest": "/api/analytics/conversions.ts"
+    },
+    {
+      "src": "/api/admin/products",
       "dest": "/api/admin/products.ts"
     },
     {
-      "src": "/api/admin/services(.*)",
-      "dest": "/api/admin/services.ts"
-    },
-    {
-      "src": "/api/admin/testimonials(.*)",
-      "dest": "/api/admin/testimonials.ts"
-    },
-    {
-      "src": "/api/admin/blog(.*)",
+      "src": "/api/admin/blog",
       "dest": "/api/admin/blog.ts"
     },
     {
-      "src": "/api/admin/contacts(.*)",
-      "dest": "/api/admin/contacts.ts"
+      "src": "/api/admin/services",
+      "dest": "/api/admin/services.ts"
     },
     {
-      "src": "/api/admin/quotes(.*)",
+      "src": "/api/admin/testimonials",
+      "dest": "/api/admin/testimonials.ts"
+    },
+    {
+      "src": "/api/admin/quotes",
       "dest": "/api/admin/quotes.ts"
     },
     {
-      "src": "/api/health",
-      "dest": "/api/health.ts"
+      "src": "/api/admin/contacts",
+      "dest": "/api/admin/contacts.ts"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.ts"
     }
   ],
   "env": {

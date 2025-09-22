@@ -1,28 +1,43 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
-  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only allow GET requests
   if (req.method !== 'GET') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed' 
-    });
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  return res.json({ 
-    status: "ok", 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
-    version: '2.0.0'
-  });
+  try {
+    // Basic health check
+    const healthData = {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      version: '2.0.0',
+      services: {
+        database: 'unknown', // Could check Supabase connection here
+        email: process.env.SMTP_HOST ? 'configured' : 'not_configured',
+        analytics: process.env.GA4_PROPERTY_ID ? 'configured' : 'not_configured'
+      }
+    };
+
+    return res.json({
+      success: true,
+      data: healthData
+    });
+  } catch (error: any) {
+    console.error('Health check error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Health check failed',
+      details: error?.message || String(error)
+    });
+  }
 }
