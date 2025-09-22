@@ -5,7 +5,7 @@ import { supabaseAdmin } from '../supabaseAdmin.js';
 const router = express.Router();
 
 // Create contact message (DB insert via service role) and send email
-router.post('/create', async (req, res) => {
+async function createContactHandler(req, res) {
 	try {
 		console.log('[contact:create] body:', req.body);
 		const { name, email, phone, subject, message, status = 'unread' } = req.body || {};
@@ -44,7 +44,11 @@ router.post('/create', async (req, res) => {
 	} catch (error: any) {
 		return res.status(500).json({ success: false, error: error?.message || 'Failed to create contact message' });
 	}
-});
+}
+
+// Expose POST / and POST /create
+router.post('/', createContactHandler);
+router.post('/create', createContactHandler);
 
 router.post('/send', async (req, res) => {
 	try {

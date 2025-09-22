@@ -3,7 +3,7 @@ import { sendEmail, renderQuoteEmail } from '../services/email.js';
 
 const router = express.Router();
 
-router.post('/send', async (req, res) => {
+async function sendQuoteHandler(req, res) {
 	try {
 		const data = req.body || {};
 		if (!data?.email && !data?.name && !data?.project_name && !data?.description) {
@@ -26,8 +26,10 @@ router.post('/send', async (req, res) => {
 	} catch (error: any) {
 		return res.status(500).json({ success: false, error: error?.message || 'Failed to send quote email' });
 	}
-});
+}
+
+// Expose POST / and POST /send
+router.post('/', sendQuoteHandler);
+router.post('/send', sendQuoteHandler);
 
 export default router;
-
-

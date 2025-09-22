@@ -106,13 +106,18 @@ async function adminFetch<T>(path: string, init: RequestInit): Promise<ApiRespon
       headers: Object.fromEntries(res.headers.entries())
     });
 
-    // Read body ONCE safely
+    // Read body ONCE safely. Use clone() to avoid "body stream already read" if another middleware consumed it.
     let text = '';
     try {
-      text = await res.text();
+      text = await res.clone().text();
       console.log('[adminFetch] Response body:', text);
     } catch (e) {
-      console.error('[adminFetch] Error reading response body:', e);
+      try {
+        text = await res.text();
+        console.log('[adminFetch] Response body (fallback):', text);
+      } catch (e2) {
+        console.error('[adminFetch] Error reading response body:', e2);
+      }
     }
 
     if (!text) {
@@ -847,20 +852,69 @@ export const api: SupabaseApiClient = {
         console.log('[contact.create] submitting:', data);
         // Use server route (service role) to avoid RLS and also send email
         const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
-        const res = await fetch(`${baseUrl}/api/contact`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        const text = await res.text();
-        let json: any = null;
-        try { json = text ? JSON.parse(text) : null; } catch {}
-        console.log('[contact.create] response:', { status: res.status, ok: res.ok, body: text });
-        if (!res.ok || !json?.success) {
-          // Fallback: try email-only route so user still gets confirmation
+        const tryEndpoints = [
+          `${baseUrl}/api/contact`,
+          `${baseUrl}/api/contact/create`,
+          `${baseUrl}/api/contact/send`
+        ];
+
+        let finalRes: Response | null = null;
+        let finalText = '';
+        let finalJson: any = null;
+
+        for (const endpoint of tryEndpoints) {
           try {
-            const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
-            await fetch(`${baseUrl}/api/contact`, {
+            const r = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+
+            // If 404, try next endpoint
+            if (r.status === 404) {
+              console.warn('[contact.create] Endpoint not found, trying next:', endpoint);
+              continue;
+            }
+
+            // Read response body safely — only if not already consumed
+            let text = '';
+            try {
+              if ((r as any).bodyUsed) {
+                text = '[body already used]';
+              } else {
+                try { text = await r.clone().text(); }
+                catch (e) { text = await r.text(); }
+              }
+            } catch (e) {
+              console.error('[contact.create] Failed to read response body:', e);
+            }
+
+            let json: any = null;
+            try { json = text && text !== '[body already used]' ? JSON.parse(text) : null; } catch {}
+
+            console.log('[contact.create] response from', endpoint, { status: r.status, ok: r.ok, body: text });
+
+            finalRes = r;
+            finalText = text;
+            finalJson = json;
+
+            // Stop trying if we got a non-404 response
+            break;
+          } catch (err) {
+            console.warn('[contact.create] Error calling endpoint, trying next:', err);
+            continue;
+          }
+        }
+
+        if (!finalRes) {
+          throw new Error('No contact endpoint reachable');
+        }
+
+        if (!finalRes.ok || !finalJson?.success) {
+          // If endpoint returned an error, still attempt to call a send-only route as a best-effort
+          try {
+            const sendEndpoint = `${baseUrl}/api/contact/send`;
+            await fetch(sendEndpoint, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -871,10 +925,14 @@ export const api: SupabaseApiClient = {
                 message: (data as any)?.message,
               })
             });
-          } catch {}
-          throw new Error((json && (json.error || json.message)) || `HTTP ${res.status}`);
+          } catch (e) {
+            console.warn('[contact.create] Best-effort send failed:', e);
+          }
+
+          throw new Error((finalJson && (finalJson.error || finalJson.message)) || `HTTP ${finalRes.status}`);
         }
-        return formatResponse(json.data || null, null, 'contact.create');
+
+        return formatResponse(finalJson.data || null, null, 'contact.create');
       } catch (error) {
         return formatResponse(null, error, 'contact.create');
       }
@@ -1086,11 +1144,20 @@ export const api: SupabaseApiClient = {
         // Fire and forget email notification
         try {
           const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
-          fetch(`${baseUrl}/api/quotes`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          }).catch(() => {});
+          const endpoints = [`${baseUrl}/api/quotes`, `${baseUrl}/api/quotes/send`];
+          for (const ep of endpoints) {
+            try {
+              const r = await fetch(ep, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+              });
+              if (r.ok) break;
+            } catch (e) {
+              // try next
+              continue;
+            }
+          }
         } catch {}
         return formatResponse(quote, error, 'quotes.create');
       } catch (error) {

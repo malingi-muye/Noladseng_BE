@@ -30,14 +30,35 @@ function adminApiPlugin(env: Record<string, string>): Plugin {
     async configureServer(server) {
       const app = express();
       const httpServer = createServer(app);
+
+      // Configure allowed origins for the Socket.IO server (include Vite preview/dev ports)
+      const socketCorsOrigins = env.VITE_DEV_SOCKET_ORIGINS
+        ? env.VITE_DEV_SOCKET_ORIGINS.split(',')
+        : ['http://localhost:5173', 'http://localhost:48752', 'https://noladseng.com'];
+
       const io = new SocketIOServer(httpServer, {
         cors: {
-          origin: ['http://localhost:5173', 'https://noladseng.com'],
+          origin: socketCorsOrigins,
           methods: ['GET', 'POST'],
           credentials: true
         }
       });
-      
+
+      // Ensure polling requests to /socket.io are CORS-enabled at the Express level as well
+      app.use((req, res, next) => {
+        if (req.url && req.url.startsWith('/socket.io/')) {
+          const origin = req.headers.origin || '*';
+          if (socketCorsOrigins.includes(origin) || socketCorsOrigins.includes('*')) {
+            res.header('Access-Control-Allow-Origin', origin);
+            res.header('Access-Control-Allow-Credentials', 'true');
+            res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+            res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+          }
+          if (req.method === 'OPTIONS') return res.sendStatus(200);
+        }
+        next();
+      });
+
       app.use(express.json({ limit: '2mb' }));
       
       // Socket.IO connection handling for development
@@ -208,9 +229,25 @@ function adminApiPlugin(env: Record<string, string>): Plugin {
       server.middlewares.use(app);
       
       // Start the HTTP server on the same port as Vite
-      httpServer.listen(5174, () => {
-        console.log('[Vite Dev] Socket.IO server running on port 5174');
+      httpServer.on('error', (err: any) => {
+        if (err && err.code === 'EADDRINUSE') {
+          console.warn('[Vite Dev] Port 5174 already in use — Socket.IO dev server not started.');
+        } else {
+          console.error('[Vite Dev] Socket.IO server error:', err);
+        }
       });
+
+      try {
+        httpServer.listen(5174, () => {
+          console.log('[Vite Dev] Socket.IO server running on port 5174');
+        });
+      } catch (err: any) {
+        if (err && err.code === 'EADDRINUSE') {
+          console.warn('[Vite Dev] Port 5174 already in use — Socket.IO dev server not started.');
+        } else {
+          console.error('[Vite Dev] Failed to start Socket.IO server:', err);
+        }
+      }
     },
     async configurePreviewServer(server) {
       const app = express();

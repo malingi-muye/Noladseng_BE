@@ -40,21 +40,22 @@ let singletonSocket: MinimalSocket = mockSocket;
     // Dynamically import to avoid build-time resolution errors when package is missing
     const { io } = await import('socket.io-client');
     
-    // Get the current hostname and protocol for proper WebSocket connection
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.host;
-    
-    // In development, use port 5174 for Socket.IO server
-    const isDev = window.location.hostname === 'localhost' && window.location.port === '5173';
-    const socketUrl = isDev ? `${protocol}//${window.location.hostname}:5174` : `${protocol}//${host}`;
-    
-    const real = io(socketUrl, { 
-      transports: ['websocket', 'polling'],
-      timeout: 5000,
+    // Build a URL using the current page protocol (http/https) — socket.io-client prefers http(s) origins
+    const pageProtocol = window.location.protocol; // 'http:' or 'https:'
+    const host = window.location.hostname;
+
+    // In development, the Vite Socket.IO server runs on port 5174.
+    // Use import.meta.env.DEV to detect dev mode reliably.
+    const isDev = typeof import.meta !== 'undefined' && (import.meta as any).env && (import.meta as any).env.DEV;
+    const socketUrl = isDev && window.location.hostname === 'localhost' ? `${pageProtocol}//${host}:5174` : `${pageProtocol}//${window.location.host}`;
+
+    const real = io(socketUrl, {
+      // allow polling first for environments where websockets are blocked
+      transports: ['polling', 'websocket'],
+      timeout: 20000,
       reconnection: true,
       reconnectionDelay: 1000,
-      reconnectionAttempts: 5,
-      maxReconnectionAttempts: 5
+      reconnectionAttempts: 10
     });
 
     // Add connection event handlers
