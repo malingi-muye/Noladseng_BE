@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { assertAdminFromBearer } from '../../server/supabaseAdmin.js';
+import { assertAdminFromBearer } from '../server/supabaseAdmin.js';
 
 export async function authenticateAdmin(req: VercelRequest, res: VercelResponse): Promise<boolean> {
   const auth = await assertAdminFromBearer(req.headers.authorization as string | undefined);
@@ -33,12 +33,4 @@ export function validateRequestBody(req: VercelRequest, res: VercelResponse): bo
   return true;
 }
 
-export function setupCors(res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-}
 
-export function handleOptions(res: VercelResponse) {
-  res.status(200).end();
-}

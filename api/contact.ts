@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabaseAdmin } from '../server/supabaseAdmin.js';
 import { sendEmail, renderContactEmail } from '../server/services/email.js';
-import { applyCors, handlePreflight } from './_cors';
+import { applyCors, handlePreflight } from '../serverless/_cors';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(req, res);

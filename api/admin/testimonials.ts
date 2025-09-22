@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabaseAdmin } from '../../server/supabaseAdmin.js';
 import type { ApiResponse } from '../../shared/index.js';
-import { authenticateAdmin, validateRequestBody } from './auth.js';
+import { authenticateAdmin, validateRequestBody } from '../../serverless/admin-auth.js';
 import { createCrudHandlers } from '../../server/utils/crud-factory.js';
 import { applyCors, handlePreflight } from '../_cors';
 

@@ -7,7 +7,6 @@ function pickAllowedOrigin(reqOrigin: string | undefined): string | undefined {
   if (list.length === 0) return '*';
   if (list.includes('*')) return '*';
   if (list.includes(reqOrigin)) return reqOrigin;
-  // Support subdomain wildcards like https://*.example.com
   for (const entry of list) {
     if (entry.includes('*')) {
       const escaped = entry.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace('\\*', '.*');
@@ -37,4 +36,5 @@ export function handlePreflight(req: VercelRequest, res: VercelResponse) {
   }
   return false;
 }
+
 
