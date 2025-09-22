@@ -846,7 +846,8 @@ export const api: SupabaseApiClient = {
       try {
         console.log('[contact.create] submitting:', data);
         // Use server route (service role) to avoid RLS and also send email
-        const res = await fetch('/api/contact/create', {
+        const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+        const res = await fetch(`${baseUrl}/api/contact`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
@@ -858,7 +859,8 @@ export const api: SupabaseApiClient = {
         if (!res.ok || !json?.success) {
           // Fallback: try email-only route so user still gets confirmation
           try {
-            await fetch('/api/contact/send', {
+            const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+            await fetch(`${baseUrl}/api/contact`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -1083,7 +1085,8 @@ export const api: SupabaseApiClient = {
           .maybeSingle();
         // Fire and forget email notification
         try {
-          fetch('/api/quotes/send', {
+          const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+          fetch(`${baseUrl}/api/quotes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
