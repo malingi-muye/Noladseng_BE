@@ -53,10 +53,6 @@
     {
       "src": "/api/admin/contacts",
       "dest": "/api/admin/contacts.ts"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.ts"
     }
   ],
   "env": {
