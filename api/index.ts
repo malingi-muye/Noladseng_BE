@@ -65,7 +65,7 @@ app.post("/api/quotes", async (req, res) => {
 });
 
 // Analytics route (simplified for Vercel)
-app.get("/api/analytics/*", (req, res) => {
+app.get("/api/analytics/:path*", (req, res) => {
   res.json({
     success: true,
     message: "Analytics endpoint - not implemented yet"
