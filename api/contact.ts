@@ -5,6 +5,8 @@ import { applyCors, handlePreflight } from '../serverless/_cors';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(req, res);
+  // Log origin selection for deployed debugging
+  try { console.log('[api/contact] Origin header:', req.headers.origin); } catch {}
   if (handlePreflight(req, res)) return;
 
   if (req.method !== 'POST') {
