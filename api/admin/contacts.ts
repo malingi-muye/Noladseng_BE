@@ -3,7 +3,7 @@ import { supabaseAdmin } from '../../server/supabaseAdmin.js';
 import type { ApiResponse } from '../../shared/index.js';
 import { authenticateAdmin, validateRequestBody } from '../../serverless/admin-auth.js';
 import { createCrudHandlers } from '../../server/utils/crud-factory.js';
-import { applyCors, handlePreflight } from '../../serverless/_cors';
+import { applyCors, handlePreflight } from '../../serverless/_cors.js';
 
 // Create CRUD handlers for contacts
 const {

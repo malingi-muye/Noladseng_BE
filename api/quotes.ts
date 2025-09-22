@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { sendEmail, renderQuoteEmail } from '../server/services/email.js';
-import { applyCors, handlePreflight } from '../serverless/_cors';
+import { applyCors, handlePreflight } from '../serverless/_cors.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCors(req, res);
