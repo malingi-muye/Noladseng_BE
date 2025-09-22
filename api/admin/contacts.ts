@@ -1,8 +1,9 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabaseAdmin } from '../../server/supabaseAdmin.js';
 import type { ApiResponse } from '../../shared/index.js';
-import { authenticateAdmin, validateRequestBody, setupCors, handleOptions } from './auth.js';
+import { authenticateAdmin, validateRequestBody } from './auth.js';
 import { createCrudHandlers } from '../../server/utils/crud-factory.js';
+import { applyCors, handlePreflight } from '../_cors';
 
 // Create CRUD handlers for contacts
 const {
@@ -82,11 +83,8 @@ const getAllContacts = async (req: VercelRequest, res: VercelResponse) => {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  setupCors(res);
-  
-  if (req.method === 'OPTIONS') {
-    return handleOptions(res);
-  }
+  applyCors(req, res);
+  if (handlePreflight(req, res)) return;
 
   // Authenticate admin for all operations
   const isAuthenticated = await authenticateAdmin(req, res);

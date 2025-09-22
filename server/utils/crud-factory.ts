@@ -1,7 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ApiResponse } from '../../shared/index.js';
 import { handleDatabaseError, handleUnexpectedError } from './error-handlers.js';
-import express from 'express';
 
 interface CrudOptions {
   tableName: string;
@@ -13,10 +12,23 @@ interface PaginationParams {
   limit?: string;
 }
 
+// Minimal request/response shapes to support both Express and Vercel handlers
+type SimpleRequest = {
+  query?: Record<string, any>;
+  params?: Record<string, any>;
+  body?: any;
+};
+
+type SimpleResponse = {
+  status: (code: number) => SimpleResponse;
+  json: (body: any) => any;
+  locals?: Record<string, any>;
+};
+
 export const createCrudHandlers = ({ tableName, supabase }: CrudOptions) => {
-  const getAll = async (req: express.Request, res: express.Response) => {
-    const { requestId } = res.locals;
-    const { search, page = '1', limit = '10', ...filters } = req.query as PaginationParams & Record<string, string>;
+  const getAll = async (req: SimpleRequest, res: SimpleResponse) => {
+    const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
+    const { search, page = '1', limit = '10', ...filters } = (req.query || {}) as PaginationParams & Record<string, string>;
 
     try {
       let query = supabase.from(tableName).select('*');
@@ -24,7 +36,7 @@ export const createCrudHandlers = ({ tableName, supabase }: CrudOptions) => {
       // Apply any additional filters
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined) {
-          query = query.eq(key, value);
+          query = query.eq(key, value as string);
         }
       });
 
@@ -71,12 +83,12 @@ export const createCrudHandlers = ({ tableName, supabase }: CrudOptions) => {
     }
   };
 
-  const getById = async (req: express.Request, res: express.Response) => {
-    const { requestId } = res.locals;
-    const { id } = req.params;
+  const getById = async (req: SimpleRequest, res: SimpleResponse) => {
+    const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
+    const rawId = (req.params && req.params.id) ?? (req.query && (req.query.id as string | undefined));
 
     try {
-      const parsedId = parseInt(id, 10);
+      const parsedId = parseInt(String(rawId), 10);
       if (!Number.isFinite(parsedId)) {
         return res.status(400).json({
           success: false,
@@ -110,8 +122,8 @@ export const createCrudHandlers = ({ tableName, supabase }: CrudOptions) => {
     }
   };
 
-  const create = async (req: express.Request, res: express.Response) => {
-    const { requestId } = res.locals;
+  const create = async (req: SimpleRequest, res: SimpleResponse) => {
+    const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
 
     try {
       const { data, error } = await supabase
@@ -133,12 +145,12 @@ export const createCrudHandlers = ({ tableName, supabase }: CrudOptions) => {
     }
   };
 
-  const update = async (req: express.Request, res: express.Response) => {
-    const { requestId } = res.locals;
-    const { id } = req.params;
+  const update = async (req: SimpleRequest, res: SimpleResponse) => {
+    const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
+    const rawId = (req.params && req.params.id) ?? (req.query && (req.query.id as string | undefined));
 
     try {
-      const parsedId = parseInt(id, 10);
+      const parsedId = parseInt(String(rawId), 10);
       if (!Number.isFinite(parsedId)) {
         return res.status(400).json({
           success: false,
@@ -185,12 +197,12 @@ export const createCrudHandlers = ({ tableName, supabase }: CrudOptions) => {
     }
   };
 
-  const remove = async (req: express.Request, res: express.Response) => {
-    const { requestId } = res.locals;
-    const { id } = req.params;
+  const remove = async (req: SimpleRequest, res: SimpleResponse) => {
+    const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
+    const rawId = (req.params && req.params.id) ?? (req.query && (req.query.id as string | undefined));
 
     try {
-      const parsedId = parseInt(id, 10);
+      const parsedId = parseInt(String(rawId), 10);
       if (!Number.isFinite(parsedId)) {
         return res.status(400).json({
           success: false,

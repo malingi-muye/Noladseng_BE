@@ -47,7 +47,7 @@ import {
   CardGrid,
 } from "../components/ui/modern-card";
 import { ModernInput, ModernTextarea } from "../components/ui/modern-input";
-import { Service, Product, Quote, ContactMessage, Testimonial, User as UserType, BlogPost } from "../../shared/api";
+import { Service, Product, Quote, Testimonial, User as UserType, BlogPost } from "../../shared/api";
 import { toast } from "sonner";
 import { api } from "../lib/api";
 import { GA4Dashboard } from "@/components/GA4Dashboard";
@@ -60,7 +60,7 @@ const AdminPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [modalType, setModalType] = useState<'services' | 'products' | 'quotes' | 'users' | 'contacts' | 'contact' | 'testimonials' | 'blog' | "">("");
+  const [modalType, setModalType] = useState<'services' | 'products' | 'quotes' | 'users' | 'testimonials' | 'blog' | "">("");
   const [loading, setLoading] = useState(false);
   const [filteredData, setFilteredData] = useState<any>({
     services: [],
@@ -81,7 +81,6 @@ const AdminPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [users, setUsers] = useState<UserType[]>([]);
-  const [contacts, setContacts] = useState<ContactMessage[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [stats, setStats] = useState({
@@ -177,20 +176,6 @@ const AdminPage = () => {
     }
   };
 
-  const fetchContacts = async () => {
-    try {
-      setLoading(true);
-      const res = await api.contact.getAll();
-      if (res.success) {
-        setContacts((res.data || []) as any);
-      }
-    } catch (error) {
-      console.error('Error fetching contact messages:', error);
-      toast.error('Failed to load contact messages');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchTestimonials = async () => {
     try {
@@ -288,7 +273,6 @@ const AdminPage = () => {
     fetchProducts();
     fetchQuotes();
     fetchUsers();
-    fetchContacts();
     fetchTestimonials();
     fetchBlogPosts();
 
@@ -371,7 +355,6 @@ const AdminPage = () => {
     { id: "products", name: "Products", icon: Package },
     { id: "quotes", name: "Quotes", icon: FileText },
     { id: "blog", name: "Blog", icon: FileText },
-    { id: "contacts", name: "Contacts", icon: MessageSquare },
     { id: "testimonials", name: "Testimonials", icon: Star },
     { id: "analytics", name: "Analytics", icon: TrendingUp },
   ];
@@ -397,10 +380,6 @@ const AdminPage = () => {
         case 'blog':
           res = await api.blog.delete(Number(id));
           break;
-        case 'contacts':
-        case 'contact':
-          res = await api.contact.delete(Number(id));
-          break;
         default:
           res = { success: false, error: 'Unsupported type' };
       }
@@ -411,7 +390,7 @@ const AdminPage = () => {
         else if (type === 'products') fetchProducts();
         else if (type === 'quotes') fetchQuotes();
         else if (type === 'users') fetchUsers();
-        else if (type === 'contacts' || type === 'contact') fetchContacts();
+
         else if (type === 'testimonials') fetchTestimonials();
         else if (type === 'blog') fetchBlogPosts();
       } else {
@@ -425,13 +404,13 @@ const AdminPage = () => {
     }
   };
 
-  const handleEdit = (item: any, type: 'services' | 'products' | 'quotes' | 'users' | 'contacts' | 'contact' | 'testimonials' | 'blog') => {
+  const handleEdit = (item: any, type: 'services' | 'products' | 'quotes' | 'users' | 'testimonials' | 'blog') => {
     setEditingItem(item);
     setModalType(type);
     setShowAddModal(true);
   };
 
-  const handleSave = async (type: 'services' | 'products' | 'quotes' | 'users' | 'contacts' | 'contact' | 'testimonials' | 'blog', data: any) => {
+  const handleSave = async (type: 'services' | 'products' | 'quotes' | 'users' | 'testimonials' | 'blog', data: any) => {
     try {
       setLoading(true);
       let res: any;
@@ -455,11 +434,7 @@ const AdminPage = () => {
           case 'blog':
             res = await api.blog.update(Number(id), data);
             break;
-          case 'contacts':
-          case 'contact':
-            res = await api.contact.update(Number(id), data);
-            break;
-          default:
+            default:
             res = { success: false, error: 'Unsupported type' };
         }
       } else {
@@ -479,10 +454,6 @@ const AdminPage = () => {
           case 'blog':
             res = await api.blog.create(data);
             break;
-          case 'contacts':
-          case 'contact':
-            res = await api.contact.create(data);
-            break;
           default:
             res = { success: false, error: 'Unsupported type' };
         }
@@ -496,7 +467,7 @@ const AdminPage = () => {
         else if (type === 'products') fetchProducts();
         else if (type === 'quotes') fetchQuotes();
         else if (type === 'users') fetchUsers();
-        else if (type === 'contacts' || type === 'contact') fetchContacts();
+
         else if (type === 'testimonials') fetchTestimonials();
         else if (type === 'blog') fetchBlogPosts();
       } else {
@@ -536,9 +507,6 @@ const AdminPage = () => {
           break;
         case 'users':
           data = users;
-          break;
-        case 'contacts':
-          data = contacts;
           break;
         case 'testimonials':
           data = testimonials;
@@ -954,77 +922,7 @@ const AdminPage = () => {
     </div>
   );
 
-  const renderContacts = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-slate-900">Contacts Management</h2>
-        <ModernButton variant="outline" onClick={() => fetchContacts()}>
-          <Download className="w-4 h-4" />
-          Refresh
-        </ModernButton>
-      </div>
-
-      <div className="grid gap-4">
-        {loading ? (
-          <div className="text-center py-8">
-            <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
-            <p className="text-slate-500 mt-2">Loading contacts...</p>
-          </div>
-        ) : contacts.length === 0 ? (
-          <div className="text-center py-8">
-            <MessageSquare className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-            <p className="text-slate-500">No contact messages found</p>
-          </div>
-        ) : (
-          contacts.map((msg) => (
-            <ModernCard key={msg.id}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-2">
-                      <h3 className="text-lg font-semibold text-slate-900">{msg.name}</h3>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        msg.status === 'unread' ? 'bg-red-100 text-red-800' :
-                        msg.status === 'replied' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {msg.status}
-                      </span>
-                    </div>
-                    <div className="text-sm text-slate-600 mb-2">
-                      {msg.email}{msg.phone ? ` • ${msg.phone}` : ''}
-                    </div>
-                    <div className="text-sm text-slate-600 mb-2">
-                      Subject: {msg.subject || 'No subject'}
-                    </div>
-                    <div className="text-slate-700 whitespace-pre-wrap">{msg.message}</div>
-                    <div className="text-sm text-slate-500 mt-2">Received: {new Date(msg.created_at).toLocaleString()}</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <ModernButton variant="ghost" size="sm" onClick={async () => {
-                      await api.contact.update(Number(msg.id), { status: 'read' });
-                      fetchContacts();
-                    }}>
-                      <Eye className="w-4 h-4" />
-                    </ModernButton>
-                    <ModernButton variant="ghost" size="sm" onClick={async () => {
-                      await api.contact.update(Number(msg.id), { status: 'replied' });
-                      fetchContacts();
-                    }}>
-                      <CheckCircle className="w-4 h-4" />
-                    </ModernButton>
-                    <ModernButton variant="ghost" size="sm" onClick={() => handleDelete("contact", msg.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </ModernButton>
-                  </div>
-                </div>
-              </CardContent>
-            </ModernCard>
-          ))
-        )}
-      </div>
-    </div>
-  );
-
+  
   const renderTestimonials = () => (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1718,7 +1616,6 @@ const AdminPage = () => {
           {activeTab === "products" && renderProducts()}
           {activeTab === "quotes" && renderQuotes()}
           {activeTab === "blog" && renderBlog()}
-          {activeTab === "contacts" && renderContacts()}
           {activeTab === "testimonials" && renderTestimonials()}
           {activeTab === "analytics" && renderAnalytics()}
         </div>
@@ -1732,7 +1629,7 @@ const AdminPage = () => {
       {/* Add/Edit Modal */}
       {showAddModal && modalType && (
         <AddEditModal
-          type={modalType as 'services' | 'products' | 'quotes' | 'users' | 'contacts' | 'contact' | 'testimonials' | 'blog'}
+          type={modalType as 'services' | 'products' | 'quotes' | 'users' | 'testimonials' | 'blog'}
           item={editingItem}
           onSave={handleSave}
           onClose={() => {
@@ -1749,7 +1646,7 @@ const AdminPage = () => {
 
 // Add/Edit Modal Component
 const AddEditModal = ({ type, item, onSave, onClose, loading }: {
-  type: 'services' | 'products' | 'quotes' | 'users' | 'contacts' | 'contact' | 'testimonials' | 'blog';
+  type: 'services' | 'products' | 'quotes' | 'users' | 'testimonials' | 'blog';
   item: any;
   onSave: (type: string, data: any) => void;
   onClose: () => void;
