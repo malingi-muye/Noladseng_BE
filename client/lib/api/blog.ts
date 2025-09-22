@@ -28,27 +28,32 @@ export const blogApi: BlogApi = {
     if (params.category) searchParams.append('category', params.category);
     if (typeof params.featured === 'boolean') searchParams.append('featured', String(params.featured));
 
-    const response = await fetch(`/api/blog?${searchParams.toString()}`);
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog?${searchParams.toString()}`);
     return response.json();
   },
 
   getBySlug: async (slug: string) => {
-    const response = await fetch(`/api/blog/post/${slug}`);
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/post/${slug}`);
     return response.json();
   },
 
   getCategories: async () => {
-    const response = await fetch('/api/blog/categories');
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/categories`);
     return response.json();
   },
 
   getComments: async (postId: number) => {
-    const response = await fetch(`/api/blog/post/${postId}/comments`);
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/post/${postId}/comments`);
     return response.json();
   },
 
   createComment: async (postId: number, data: Partial<BlogComment>) => {
-    const response = await fetch(`/api/blog/post/${postId}/comments`, {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/post/${postId}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -57,12 +62,14 @@ export const blogApi: BlogApi = {
   },
 
   listAll: async () => {
-    const response = await fetch('/api/blog/all');
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/all`);
     return response.json();
   },
 
   create: async (data: Partial<BlogPost>) => {
-    const response = await fetch('/api/blog/post', {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/post`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -71,7 +78,8 @@ export const blogApi: BlogApi = {
   },
 
   update: async (id: number, data: Partial<BlogPost>) => {
-    const response = await fetch(`/api/blog/post/${id}`, {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/post/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -80,14 +88,16 @@ export const blogApi: BlogApi = {
   },
 
   delete: async (id: number) => {
-    const response = await fetch(`/api/blog/post/${id}`, {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/post/${id}`, {
       method: 'DELETE',
     });
     return response.json();
   },
 
   createCategory: async (data: Partial<BlogCategory>) => {
-    const response = await fetch('/api/blog/categories', {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/categories`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -96,7 +106,8 @@ export const blogApi: BlogApi = {
   },
 
   updateCategory: async (id: number, data: Partial<BlogCategory>) => {
-    const response = await fetch(`/api/blog/categories/${id}`, {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/categories/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -105,21 +116,24 @@ export const blogApi: BlogApi = {
   },
 
   deleteCategory: async (id: number) => {
-    const response = await fetch(`/api/blog/categories/${id}`, {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/categories/${id}`, {
       method: 'DELETE',
     });
     return response.json();
   },
 
   approveComment: async (id: number) => {
-    const response = await fetch(`/api/blog/comments/${id}/approve`, {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/comments/${id}/approve`, {
       method: 'PUT',
     });
     return response.json();
   },
 
   deleteComment: async (id: number) => {
-    const response = await fetch(`/api/blog/comments/${id}`, {
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    const response = await fetch(`${baseUrl}/api/blog/comments/${id}`, {
       method: 'DELETE',
     });
     return response.json();

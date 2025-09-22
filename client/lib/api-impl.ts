@@ -74,7 +74,9 @@ async function adminFetch<T>(path: string, init: RequestInit): Promise<ApiRespon
     
     // Ensure path starts with a slash and prepend base URL if needed
     const fullPath = path.startsWith('/') ? path : `/${path}`;
-    const baseUrl = window.location.origin; // e.g., 'http://localhost:8080'
+    
+    // Use environment-based API URL
+    const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
     const url = new URL(fullPath, baseUrl).toString();
 
     // Log request details
