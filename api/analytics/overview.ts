@@ -1,11 +1,9 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { ga4Analytics } from '../../server/services/ga4Analytics';
+import { applyCors, handlePreflight } from '../../serverless/_cors';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  applyCors(req, res);
   
   // Prevent any caching on analytics endpoints
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -13,9 +11,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Expires', '0');
   res.setHeader('Surrogate-Control', 'no-store');
   
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  if (handlePreflight(req, res)) return;
 
   if (req.method !== 'GET') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
