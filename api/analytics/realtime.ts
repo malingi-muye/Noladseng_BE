@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { ga4Analytics } from '../../server/services/ga4Analytics';
+import { ga4Analytics } from '../../server/services/ga4Analytics.js';
 import { applyCors, handlePreflight } from '../../serverless/_cors.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
