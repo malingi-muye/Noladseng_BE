@@ -57,14 +57,6 @@
     {
       "source": "/api/cors-test",
       "destination": "/api/cors-test.ts"
-    },
-    {
-      "source": "/api/simple-cors-test",
-      "destination": "/api/simple-cors-test.ts"
-    },
-    {
-      "source": "/api/simple-contact",
-      "destination": "/api/simple-contact.ts"
     }
   ],
   "headers": [
