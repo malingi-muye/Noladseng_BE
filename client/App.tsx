@@ -16,6 +16,7 @@ import { router } from "./router";
 import { AuthProvider } from "./hooks/useAuth";
 import { initializePWA } from "./lib/pwa";
 import "./lib/auth-debug"; // Import debug utility
+import { useState } from "react";
 
 
 // Lazy load pages for code splitting
@@ -55,6 +56,8 @@ const App = () => {
           <Suspense fallback={<PageLoading />}>
             <RouterProvider router={router} future={{ v7_startTransition: true }} />
           </Suspense>
+          {/* Idle-load chat widget so it doesn't block initial render */}
+          <IdleTawkLoader />
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
@@ -64,3 +67,26 @@ const App = () => {
 
 // Ensure no direct usage of <App />; use <Root /> instead
 export default App;
+
+// Defer loading Tawk until browser is idle or after a short delay
+function IdleTawkLoader() {
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const load = () => setShouldLoad(true);
+    if ("requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(load, { timeout: 3000 });
+    } else {
+      setTimeout(load, 2500);
+    }
+  }, []);
+
+  if (!shouldLoad) return null;
+
+  const Tawk = React.lazy(() => import("./components/TawkLoader"));
+  return (
+    <Suspense fallback={null}>
+      <Tawk />
+    </Suspense>
+  );
+}

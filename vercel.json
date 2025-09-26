@@ -35,7 +35,15 @@
       "destination": "/api/admin/products.ts"
     },
     {
+      "source": "/api/admin/products/:path*",
+      "destination": "/api/admin/products.ts"
+    },
+    {
       "source": "/api/admin/blog",
+      "destination": "/api/admin/blog.ts"
+    },
+    {
+      "source": "/api/admin/blog/:path*",
       "destination": "/api/admin/blog.ts"
     },
     {
@@ -43,7 +51,15 @@
       "destination": "/api/admin/services.ts"
     },
     {
+      "source": "/api/admin/services/:path*",
+      "destination": "/api/admin/services.ts"
+    },
+    {
       "source": "/api/admin/testimonials",
+      "destination": "/api/admin/testimonials.ts"
+    },
+    {
+      "source": "/api/admin/testimonials/:path*",
       "destination": "/api/admin/testimonials.ts"
     },
     {
@@ -51,7 +67,15 @@
       "destination": "/api/admin/quotes.ts"
     },
     {
+      "source": "/api/admin/quotes/:path*",
+      "destination": "/api/admin/quotes.ts"
+    },
+    {
       "source": "/api/admin/contacts",
+      "destination": "/api/admin/contacts.ts"
+    },
+    {
+      "source": "/api/admin/contacts/:path*",
       "destination": "/api/admin/contacts.ts"
     },
     {
