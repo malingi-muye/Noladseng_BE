@@ -1,0 +1,11 @@
+/* Import base styles and configuration */
+@import './modules/base.css';
+
+/* Import component styles */
+@import './modules/components.css';
+
+/* Import utility classes */
+@import './modules/utilities.css';
+
+/* Import animations */
+@import './modules/animations.css';

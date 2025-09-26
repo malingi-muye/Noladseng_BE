@@ -1,8 +1,8 @@
 import { handleDatabaseError, handleUnexpectedError } from './error-handlers.js';
 export const createCrudHandlers = ({ tableName, supabase }) => {
     const getAll = async (req, res) => {
-        const { requestId } = res.locals;
-        const { search, page = '1', limit = '10', ...filters } = req.query;
+        const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
+        const { search, page = '1', limit = '10', ...filters } = (req.query || {});
         try {
             let query = supabase.from(tableName).select('*');
             // Apply any additional filters
@@ -48,10 +48,10 @@ export const createCrudHandlers = ({ tableName, supabase }) => {
         }
     };
     const getById = async (req, res) => {
-        const { requestId } = res.locals;
-        const { id } = req.params;
+        const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
+        const rawId = (req.params && req.params.id) ?? (req.query && req.query.id);
         try {
-            const parsedId = parseInt(id, 10);
+            const parsedId = parseInt(String(rawId), 10);
             if (!Number.isFinite(parsedId)) {
                 return res.status(400).json({
                     success: false,
@@ -82,7 +82,7 @@ export const createCrudHandlers = ({ tableName, supabase }) => {
         }
     };
     const create = async (req, res) => {
-        const { requestId } = res.locals;
+        const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
         try {
             const { data, error } = await supabase
                 .from(tableName)
@@ -102,10 +102,10 @@ export const createCrudHandlers = ({ tableName, supabase }) => {
         }
     };
     const update = async (req, res) => {
-        const { requestId } = res.locals;
-        const { id } = req.params;
+        const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
+        const rawId = (req.params && req.params.id) ?? (req.query && req.query.id);
         try {
-            const parsedId = parseInt(id, 10);
+            const parsedId = parseInt(String(rawId), 10);
             if (!Number.isFinite(parsedId)) {
                 return res.status(400).json({
                     success: false,
@@ -147,10 +147,10 @@ export const createCrudHandlers = ({ tableName, supabase }) => {
         }
     };
     const remove = async (req, res) => {
-        const { requestId } = res.locals;
-        const { id } = req.params;
+        const requestId = res.locals?.requestId ?? Math.random().toString(36).slice(2);
+        const rawId = (req.params && req.params.id) ?? (req.query && req.query.id);
         try {
-            const parsedId = parseInt(id, 10);
+            const parsedId = parseInt(String(rawId), 10);
             if (!Number.isFinite(parsedId)) {
                 return res.status(400).json({
                     success: false,

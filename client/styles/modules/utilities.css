@@ -1,0 +1,98 @@
+@layer utilities {
+  /* Layout Utilities */
+  .container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .section-sm {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .section-lg {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  /* Responsive Padding */
+  .pad-0 { padding: 0; }
+  .pad-xs { padding: 0.5rem; }
+  .pad-sm { padding: 1rem; }
+  .pad-md { padding: 1.5rem; }
+  .pad-lg { padding: 2rem; }
+  .pad-xl { padding: 3rem; }
+
+  .pad-x-0 { padding-left: 0; padding-right: 0; }
+  .pad-x-xs { padding-left: 0.5rem; padding-right: 0.5rem; }
+  .pad-x-sm { padding-left: 1rem; padding-right: 1rem; }
+  .pad-x-md { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .pad-x-lg { padding-left: 2rem; padding-right: 2rem; }
+  .pad-x-xl { padding-left: 3rem; padding-right: 3rem; }
+
+  .pad-y-0 { padding-top: 0; padding-bottom: 0; }
+  .pad-y-xs { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .pad-y-sm { padding-top: 1rem; padding-bottom: 1rem; }
+  .pad-y-md { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+  .pad-y-lg { padding-top: 2rem; padding-bottom: 2rem; }
+  .pad-y-xl { padding-top: 3rem; padding-bottom: 3rem; }
+
+  /* Accessibility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Motion Preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* High Contrast Mode */
+  @media (prefers-contrast: high) {
+    .btn-primary {
+      border: 2px solid black;
+    }
+    
+    .card {
+      border: 2px solid rgb(148 163 184);
+    }
+    
+    .text-slate-600 {
+      color: rgb(30 41 59);
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+}

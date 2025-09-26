@@ -3,6 +3,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "path";
+import compression from "compression";
 import { fileURLToPath } from "url";
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
@@ -14,9 +15,22 @@ const app = express();
 const server = createServer(app);
 const io = new SocketIOServer(server, {
     cors: {
-        origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173', 'https://noladseng.com'],
+        origin: (origin, callback) => {
+            const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
+                'http://localhost:5173',
+                'https://noladseng.com',
+                'https://www.noladseng.com'
+            ];
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         methods: ['GET', 'POST'],
-        credentials: true
+        credentials: true,
+        allowedHeaders: ['Content-Type', 'Authorization']
     }
 });
 const PORT = process.env.PORT || 8000;
@@ -24,6 +38,7 @@ const PORT = process.env.PORT || 8000;
 setSocketIO(io);
 // Middleware
 app.use(cors());
+app.use(compression()); // Enable compression
 app.use(express.json());
 // Request logging middleware
 app.use((req, res, next) => {

@@ -1,0 +1,51 @@
+
+
+Site Audit / Noladseng	Today, 11:18 AM	Compare with: Today, 10:49 AM 26 Sep 2025 Noladseng (noladseng.com/)
+
+All issuesTurned off0Importance Export all issues
+Issue
+Crawled
+Change
+Added
+New
+Removed
+MissingInternal pages404 page000000
+	4XX page000000
+	500 page000000
+	5XX page000000
+	Timed out000000
+	HTTPS/HTTP mixed content
+
+Indexability000000
+	Canonical points to 4XX000000Canonical points to 5XX000000Canonical points to redirect000000Nofollow in HTML and HTTP header000000Nofollow page000000Noindex in HTML and HTTP header000000Noindex page000000Non-canonical page specified as canonical one000000Canonical from HTTP to HTTPS200000Canonical from HTTPS to HTTP000000Canonical URL changed00————Indexable page became non-indexable00————Noindex and nofollow page000000Noindex follow page000000Noindex page became indexable00————
+Links
+
+INDEXABLE
+
+Canonical URL has no incoming internal links000000HTTPS page has internal links to HTTP000000Orphan page (has no incoming internal links)000000Page has links to broken page000000Page has no outgoing links000000Page has links to redirect000000Page has nofollow incoming internal links only000000Redirected page has no incoming internal links000000HTTP page has internal links to HTTPS000000Page has nofollow and dofollow incoming internal links000000Page has nofollow outgoing internal links000000Page has only one dofollow incoming internal link000000NOT INDEXABLEOrphan page (has no incoming internal links)400000Page has no outgoing links400000HTTPS page has internal links to HTTP000000Page has links to broken page000000HTTP page has internal links to HTTPS000000Page has links to redirect000000
+Page has nofollow and dofollow incoming internal000000linksPage has nofollow incoming internal links only000000Page has nofollow outgoing internal links000000Page has only one dofollow incoming internal link000000Redirected page has no incoming internal links
+
+Redirects000000Broken redirect000000Redirect chain too long000000Redirect loop000000302 redirect0000003XX redirect000000HTTPS to HTTP redirect000000HTTP to HTTPS redirect000000Meta refresh redirect000000Redirect chain000000Redirect target changed00————
+Content
+
+INDEXABLE
+
+Multiple meta description tags 000000Multiple title tags 000000Title tag missing or empty 000000H1 tag missing or empty000000Low word count 000000Meta description tag missing or empty 000000Meta description too long 000000Meta description too short 000000Title too long 000000Title too short 000000H1 tag changed 00————Meta description changed 00————Multiple H1 tags000000Page and SERP titles do not match 000000SERP title changed 00————Title tag changed 00————Word count changed 00————NOT INDEXABLEMeta description tag missing or empty 000000Multiple meta description tags 000000Multiple title tags 000000Title tag missing or empty 000000H1 tag missing or empty400000Low word count 400000Meta description too long 000000Meta description too short 000000Multiple H1 tags000000Title too long 000000Title too short 
+
+Social tags000000Open Graph tags incomplete000000Open Graph URL not matching canonical000000X (Twitter) card incomplete000000Open Graph tags missing000000
+X (Twitter) card missing000000
+DuplicatesDuplicate pages without canonical 000000
+LocalizationHreflang and HTML lang mismatch000000Hreflang annotation invalid000000Hreflang to non-canonical000000Hreflang to redirect or broken page000000HTML lang attribute invalid000000Missing reciprocal hreflang (no return-tag)000000More than one page for same language in hreflang000000Page referenced for more than one language in hreflang000000Hreflang defined but HTML lang missing000000HTML lang attribute missing000000Self-reference hreflang annotation missing000000Not all pages from hreflang group were crawled000000X-default hreflang annotation missing000000
+Usability and performanceNot compressed400000Content is not sized correctly000000Document uses plugins000000Font size too small000000HTML file size too large000000Page stopped passing CWV requirements00————Pages with poor CLS000000Pages with poor FID000000Pages with poor INP000000Pages with poor LCP000000Slow page000000Tap targets too small or too close together000000Viewport not set000000
+ImagesImage broken000000Image file size too large000000Page has broken image000000HTTPS page links to HTTP image000000Image redirects000000Missing alt text000000Page has redirected image000000
+JavaScriptJavaScript broken000000Page has broken JavaScript000000HTTPS page links to HTTP JavaScript000000JavaScript redirects000000Page has redirected JavaScript000000
+CSSCSS file size too large400000CSS broken000000CSS redirects000000HTTPS page links to HTTP CSS000000Page has broken CSS000000Page has redirected CSS000000
+Sitemaps
+
+3XX redirect in sitemap0000004XX page in sitemap0000005XX page in sitemap000000Noindex page in sitemap000000Non-canonical page in sitemap000000Page from sitemap timed out000000Sitemap has syntax error000000Sitemap is not accessible000000Sitemap larger than 50MB000000Sitemap with over 50K URLs000000Sitemap in the wrong format000000Sitemap includes URLs out of its scope000000Indexable page not in sitemap000000No. of URLs in sitemap decreased00————Page in multiple sitemaps000000Pages added to sitemaps00————Pages removed from sitemaps00————
+External pagesExternal 3XX redirect000000External 4XX000000External 5XX000000External time out000000
+Other3XX page receives organic traffic000000403 page receives organic traffic0000004XX page receives organic traffic000000Double slash in URL000000Noindex page receives organic traffic000000Robots.txt has syntax error000000Robots.txt has too many redirects or redirect loop000000Robots.txt is not accessible000000Robots.txt changed00————More than three parameters in URL000000No. of referring domains dropped00————Non-canonical page receives organic traffic000000Organic traffic dropped00————Pages dropped from Top 1000————Pages to submit to IndexNow 00————Robots.txt rules disallow to crawl000000Structured data has Google rich results validation error000000Structured data has schema.org validation error000000
+
+
+
+

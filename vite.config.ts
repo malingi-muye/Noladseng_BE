@@ -5,6 +5,7 @@ import type { Plugin } from 'vite';
 import express from 'express';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
+import compression from 'vite-plugin-compression';
 
 function adminApiPlugin(env: Record<string, string>): Plugin {
   const supabaseUrl = env.VITE_SUPABASE_URL || env.SUPABASE_URL;
@@ -419,16 +420,49 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: "dist",
       chunkSizeWarningLimit: 1000,
+      cssCodeSplit: true,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      },
       rollupOptions: {
         output: {
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom'],
             ui: ['@radix-ui/react-alert-dialog', '@radix-ui/react-dialog', '@radix-ui/react-toast'],
-          }
+            styles: ['./client/global.css']
+          },
+          assetFileNames: (assetInfo) => {
+            let extType = assetInfo.name.split('.').at(1);
+            if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+              extType = 'img';
+            }
+            return `assets/${extType}/[name]-[hash][extname]`;
+          },
+          chunkFileNames: 'assets/js/[name]-[hash].js',
+          entryFileNames: 'assets/js/[name]-[hash].js',
         }
       }
     },
-    plugins: [react(), adminApiPlugin(env)],
+    plugins: [
+      react(),
+      adminApiPlugin(env),
+      compression({
+        algorithm: 'gzip',
+        ext: '.gz',
+        threshold: 10240, // Only compress files bigger than 10KB
+        deleteOriginFile: false
+      }),
+      compression({
+        algorithm: 'brotliCompress',
+        ext: '.br',
+        threshold: 10240,
+        deleteOriginFile: false
+      })
+    ],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./client"),
