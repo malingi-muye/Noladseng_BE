@@ -47,6 +47,18 @@ let singletonSocket: MinimalSocket = mockSocket;
     // In development, the Vite Socket.IO server runs on port 5174.
     // Use import.meta.env.DEV to detect dev mode reliably.
     const isDev = typeof import.meta !== 'undefined' && (import.meta as any).env && (import.meta as any).env.DEV;
+
+    // Allow production disable via env flag
+    const enableProdSocket = (typeof import.meta !== 'undefined' && (import.meta as any).env && (import.meta as any).env.VITE_ENABLE_SOCKET) === 'true';
+
+    // If in production and not explicitly enabled, keep using mock socket
+    if (!isDev && !enableProdSocket) {
+      if (typeof console !== 'undefined') {
+        console.log('[Socket.IO] Disabled in production (set VITE_ENABLE_SOCKET=true to enable)');
+      }
+      return;
+    }
+
     const socketUrl = isDev && window.location.hostname === 'localhost' ? `${pageProtocol}//${host}:5174` : `${pageProtocol}//${window.location.host}`;
 
     const real = io(socketUrl, {

@@ -3,9 +3,9 @@
  * Provides offline support and caching strategy
  */
 
-const CACHE_NAME = "nolads-engineering-v1";
-const STATIC_CACHE = "static-v1";
-const DYNAMIC_CACHE = "dynamic-v1";
+const CACHE_NAME = "nolads-engineering-v3";
+const STATIC_CACHE = "static-v3";
+const DYNAMIC_CACHE = "dynamic-v3";
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -64,7 +64,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Fetch event - serve from cache or network
+// Fetch event - refined routing to avoid caching HTML and ensure correct MIME for modules
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -74,22 +74,38 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Bypass API requests entirely (no SW caching/interception)
-  if (url.pathname.startsWith("/api")) {
+  // Never interfere with socket.io, API, or Supabase realtime
+  if (
+    url.pathname.startsWith("/socket.io/") ||
+    url.pathname.startsWith("/api")
+  ) {
     return;
   }
 
-  // Handle different types of requests
-  if (url.pathname === "/") {
-    // Homepage - cache first, then network
-    event.respondWith(cacheFirst(request));
-  } else if (url.pathname.startsWith("/uploads/")) {
-    // Uploaded files - cache first, then network
-    event.respondWith(cacheFirst(request));
-  } else {
-    // Other static files - cache first, then network
-    event.respondWith(cacheFirst(request));
+  // Never cache navigation requests (HTML). Use network-first with offline fallback
+  if (request.mode === "navigate" || request.destination === "document") {
+    event.respondWith(networkFirstDocument(request));
+    return;
   }
+
+  // Assets: prefer network, cache successful responses. Validate module/script MIME types
+  if (
+    url.pathname.startsWith("/assets/") ||
+    request.destination === "script" ||
+    request.destination === "worker"
+  ) {
+    event.respondWith(networkFirstAssetWithMimeGuard(request));
+    return;
+  }
+
+  // Uploaded/static media: cache-first is fine
+  if (url.pathname.startsWith("/uploads/") || request.destination === "image") {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  // Default: network-first then cache
+  event.respondWith(networkFirst(request));
 });
 
 // Cache First Strategy
@@ -147,6 +163,46 @@ async function networkFirst(request) {
         headers: { "Content-Type": "application/json" },
       },
     );
+  }
+}
+
+// Network-first just for documents (HTML), with offline fallback
+async function networkFirstDocument(request) {
+  try {
+    const networkResponse = await fetch(request);
+    // Do not cache HTML to avoid stale index.html or route HTML
+    return networkResponse;
+  } catch (error) {
+    const cachedResponse = await caches.match("/offline.html");
+    if (cachedResponse) return cachedResponse;
+    return new Response("Offline", { status: 503, statusText: "Offline" });
+  }
+}
+
+// Network-first for assets/scripts with MIME/type guard to avoid cached HTML response
+async function networkFirstAssetWithMimeGuard(request) {
+  try {
+    const response = await fetch(request);
+    const contentType = response.headers.get("content-type") || "";
+    const isModuleScript = request.destination === "script" || request.destination === "worker";
+
+    // If a script/worker returns HTML, treat as invalid (likely a 404 fallback page)
+    if (isModuleScript && contentType.includes("text/html")) {
+      // Do not cache this bad response; try cache as fallback
+      const cached = await caches.match(request);
+      if (cached) return cached;
+      return new Response("Bad module MIME", { status: 502, statusText: "Bad Gateway" });
+    }
+
+    if (response.ok) {
+      const cache = await caches.open(DYNAMIC_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) return cachedResponse;
+    throw error;
   }
 }
 

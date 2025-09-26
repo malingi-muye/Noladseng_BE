@@ -706,6 +706,7 @@ export const api: SupabaseApiClient = {
           .from('services')
           .select('*')
           .eq('is_active', true)
+          .eq('is_featured', true)
           .order('created_at', { ascending: false });
 
         if (limit) query = query.limit(limit);
