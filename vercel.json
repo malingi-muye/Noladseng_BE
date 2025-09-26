@@ -35,48 +35,48 @@
       "destination": "/api/admin/products.ts"
     },
     {
-      "source": "/api/admin/products/:path*",
-      "destination": "/api/admin/products.ts"
+      "source": "/api/admin/products/:id",
+      "destination": "/api/admin/products.ts?id=:id"
     },
     {
       "source": "/api/admin/blog",
       "destination": "/api/admin/blog.ts"
     },
     {
-      "source": "/api/admin/blog/:path*",
-      "destination": "/api/admin/blog.ts"
+      "source": "/api/admin/blog/:id",
+      "destination": "/api/admin/blog.ts?id=:id"
     },
     {
       "source": "/api/admin/services",
       "destination": "/api/admin/services.ts"
     },
     {
-      "source": "/api/admin/services/:path*",
-      "destination": "/api/admin/services.ts"
+      "source": "/api/admin/services/:id",
+      "destination": "/api/admin/services.ts?id=:id"
     },
     {
       "source": "/api/admin/testimonials",
       "destination": "/api/admin/testimonials.ts"
     },
     {
-      "source": "/api/admin/testimonials/:path*",
-      "destination": "/api/admin/testimonials.ts"
+      "source": "/api/admin/testimonials/:id",
+      "destination": "/api/admin/testimonials.ts?id=:id"
     },
     {
       "source": "/api/admin/quotes",
       "destination": "/api/admin/quotes.ts"
     },
     {
-      "source": "/api/admin/quotes/:path*",
-      "destination": "/api/admin/quotes.ts"
+      "source": "/api/admin/quotes/:id",
+      "destination": "/api/admin/quotes.ts?id=:id"
     },
     {
       "source": "/api/admin/contacts",
       "destination": "/api/admin/contacts.ts"
     },
     {
-      "source": "/api/admin/contacts/:path*",
-      "destination": "/api/admin/contacts.ts"
+      "source": "/api/admin/contacts/:id",
+      "destination": "/api/admin/contacts.ts?id=:id"
     },
     {
       "source": "/api/cors-test",
@@ -97,7 +97,7 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, X-Requested-With, Accept, Origin"
+          "value": "Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control"
         },
         {
           "key": "Access-Control-Allow-Credentials",
