@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Menu, X, Zap, ChevronDown } from "lucide-react";
+import { Menu, X, Zap, ChevronDown, Facebook, Linkedin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { ModernButton } from "./ui/modern-button";
 import { cn } from "@/lib/utils";
@@ -222,6 +222,27 @@ const ModernNavBar = () => {
 
           {/* Enhanced Desktop CTA */}
           <div className="hidden lg:flex items-center space-x-3 animate-fade-in-right">
+            {/* Social Media Links */}
+            <div className="flex items-center space-x-2">
+              <a
+                href="https://www.facebook.com/share/19gXQddFh4/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg text-blue-100 hover:text-blue-400 hover:bg-blue-800/60 transition-all duration-300 hover:scale-110"
+                aria-label="Follow us on Facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="https://ke.linkedin.com/company/nolads-engineering-limited"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg text-blue-100 hover:text-blue-400 hover:bg-blue-800/60 transition-all duration-300 hover:scale-110"
+                aria-label="Follow us on LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
             <Link to="/admin">
               <ModernButton
                 variant="ghost"
@@ -350,6 +371,31 @@ const ModernNavBar = () => {
 
             {/* Enhanced Mobile CTAs */}
             <div className="pt-6 mt-6 border-t border-yellow-400/50 space-y-3">
+              {/* Mobile Social Media Links */}
+              <div className="animate-fade-in-up delay-400">
+                <div className="flex items-center justify-center space-x-4">
+                  <a
+                    href="https://www.facebook.com/share/19gXQddFh4/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-lg text-blue-100 hover:text-blue-400 hover:bg-blue-800/60 transition-all duration-300 hover:scale-110"
+                    aria-label="Follow us on Facebook"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Facebook className="w-6 h-6" />
+                  </a>
+                  <a
+                    href="https://ke.linkedin.com/company/nolads-engineering-limited"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-lg text-blue-100 hover:text-blue-400 hover:bg-blue-800/60 transition-all duration-300 hover:scale-110"
+                    aria-label="Follow us on LinkedIn"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Linkedin className="w-6 h-6" />
+                  </a>
+                </div>
+              </div>
               <div className="animate-fade-in-up delay-500">
                 <Link to="/admin">
                   <ModernButton

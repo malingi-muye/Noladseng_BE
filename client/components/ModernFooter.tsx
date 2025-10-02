@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Facebook, Linkedin } from 'lucide-react';
 import { ModernButton } from './ui/modern-button';
 
 export const ModernFooter: React.FC = () => {
@@ -98,6 +98,27 @@ export const ModernFooter: React.FC = () => {
             </p>
           </div>
           <div className="flex items-center gap-5 mt-3.5 md:mt-0">
+            {/* Social Media Links */}
+            <div className="flex items-center gap-3">
+              <a
+                href="https://www.facebook.com/share/19gXQddFh4/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-blue-500 transition-colors"
+                aria-label="Follow us on Facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="https://ke.linkedin.com/company/nolads-engineering-limited"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-blue-600 transition-colors"
+                aria-label="Follow us on LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
             <a
               href="#"
               className="text-slate-400 hover:text-white transition-colors text-sm"
